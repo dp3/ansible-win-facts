@@ -1,0 +1,2 @@
+json_files: '../roles/facts/files/data/json/'
+host_program_csv: '../roles/facts/files/data/programs'

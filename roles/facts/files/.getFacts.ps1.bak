@@ -1,0 +1,13 @@
+#sourced from https://hindenes.com/trondsworking/2016/11/05/using-ansible-as-a-software-inventory-db-for-your-windows-nodes/
+$packages = Get-WmiObject -Class Win32_Product
+$returnpackages = @()
+foreach ($package in $packages)
+{
+    $PackageObj = "" | Select Name, IdentifyingNumber, Version, Caption
+    $PackageObj.Name = $Package.Name
+    $PackageObj.IdentifyingNumber = $Package.IdentifyingNumber
+    $PackageObj.Version = $Package.Version
+    $PackageObj.Caption = $Package.Caption
+    $returnpackages += $PackageObj;$PackageObj = $null
+}
+$returnpackages

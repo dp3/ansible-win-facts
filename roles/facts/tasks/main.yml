@@ -1,0 +1,61 @@
+---
+- name: create Scripts dir
+  win_file:
+    path: C:\Scripts
+    state: directory 
+
+- name: create Scripts facts dir
+  win_file:
+    path: C:\Scripts\facts
+    state: absent        
+
+- name: copy custom facts file
+  win_copy:
+    src: getFacts.ps1
+    dest: C:\Scripts\
+
+- name: gather extra facts
+  setup:
+    fact_path: C:\Scripts
+
+- name: Set intermediate fact
+  set_fact:
+    vars_hack: "{{ hostvars[inventory_hostname] }}"
+
+- name: set program facts
+  set_fact:
+    one_fact: ansible_getFacts
+    var_hack:  "{{ hostvars[inventory_hostname] }}" 
+
+#- name: create folder json object files
+#  file:
+#    path: "{{ json_files }}"
+#    state: directory
+#  delegate_to: localhost            
+            
+#dont delete the entire dir, delete the file to update it. 
+- name: delete json file 
+  file:
+    path: "{{ json_files  }}/{{ inventory_hostname }}.json"
+    state: absent
+  failed_when: false
+  delegate_to: localhost
+
+#- name: create temp folder
+#  file:
+#    path: "{{ json_files }}"
+#    state: directory
+#  delegate_to: localhost
+
+- name: Dump all vars
+  action: template src=templates/dumpall.j2 dest="{{json_files}}/{{ inventory_hostname }}.json"
+  delegate_to: localhost
+#
+##- name: add to db
+##  hosts: localhost
+##  tasks:
+#
+- name: add to db
+  script: app.py
+  delegate_to: localhost
+  ignore_errors: true
